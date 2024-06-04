@@ -1,14 +1,10 @@
 {
-    "name": "codeigniter4/appstarter",
-    "description": "CodeIgniter4 starter app",
+    "name": "imgFormat",
+    "description": "Editor de Imagens Online imgFormat.com",
     "license": "MIT",
     "type": "project",
-    "homepage": "https://codeigniter.com",
-    "support": {
-        "forum": "https://forum.codeigniter.com/",
-        "source": "https://github.com/codeigniter4/CodeIgniter4",
-        "slack": "https://codeigniterchat.slack.com"
-    },
+    "homepage": "https://imgformat.com/",
+    "version": "1.1.0",
     "require": {
         "php": "^8.1",
         "codeigniter4/framework": "^4.0"
