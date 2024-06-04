@@ -45,7 +45,7 @@
                             <h2>Otimizar para WEB</h2>
                         </a>
                         <!--  no futuro - 400px, 700px e 1440 px-->
-                        <p>Importe uma imagem, corte e converta para o formato webp em 1400px de largura</p>
+                        <p>Importe ou cole uma imagem da Área de Transferência, corte e converta para o formato webp/png em 1400px de largura</p>
                     </div>
                 </div>
             </div>

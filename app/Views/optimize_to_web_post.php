@@ -16,9 +16,23 @@
         integrity="sha512-hvNR0F/e2J7zPPfLC9auFe3/SE0yG4aJCOd/qxew74NN7eyiSKjr7xJJMu1Jy2wf7FXITpWS1E/RY8yzuXN7VA=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
+        
+        .checkerboard {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background-color: #555;
+            background-image:
+                linear-gradient(45deg, #777 25%, transparent 25%, transparent 75%, #777 75%),
+                linear-gradient(45deg, #777 25%, transparent 25%, transparent 75%, #777 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+        }
+
         img {
             display: block;
             max-width: 100%;
+            background-color: transparent;
         }
     </style>
 
@@ -35,12 +49,16 @@
             <div class="card has-text-centered">
                 <div class="card-content">
 
-                        <h2>Imagem Final</h2>
+                    <h2>Imagem: <?= esc($imageName) ?> - <?= esc($imageDimensions) ?> Tamanho: <?= esc($imageSize) ?></h2>
+                    <div class="checkerboard">
                         <figure class="image">
-                            <img id="imageCropped" src="<?= esc($image) ?>" alt="<?= esc($image) ?>" style="border: 1px solid #555;">
+                            <img id="imageCropped" src="<?= esc($image) ?>" alt="<?= esc($image) ?>"
+                                style="border: 1px solid #555;">
                         </figure>
+                    </div>
 
-                        <a class="button is-fullwidth is-link" href="<?= esc($image) ?>" download>Download</a>
+
+                    <a class="button is-fullwidth is-link" href="<?= esc($image) ?>" download>Download</a>
                 </div>
             </div>
         </div>

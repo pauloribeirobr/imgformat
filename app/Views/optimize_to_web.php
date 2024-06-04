@@ -16,6 +16,18 @@
         integrity="sha512-hvNR0F/e2J7zPPfLC9auFe3/SE0yG4aJCOd/qxew74NN7eyiSKjr7xJJMu1Jy2wf7FXITpWS1E/RY8yzuXN7VA=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
+        .checkerboard {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background-color: #555;
+            background-image:
+                linear-gradient(45deg, #777 25%, transparent 25%, transparent 75%, #777 75%),
+                linear-gradient(45deg, #777 25%, transparent 25%, transparent 75%, #777 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+        }
+
         img {
             display: block;
             max-width: 100%;
@@ -44,6 +56,14 @@
     </div>
     <div class="columns is-multiline">
         <div class="column is-8 is-offset-2">
+
+            <div class="card">
+                <div class="card-content">
+
+                        Clique aqui e pressione<span class="file-icon"><i class="fa-solid fa-clipboard"></i></span> CTRL + V para colar a imagem copiada na sua Área de Transferência
+
+                </div>
+            </div>
 
             <div class="card">
                 <div class="card-content">
@@ -117,7 +137,38 @@
             <div class="card has-text-centered">
                 <div class="card-content">
                     <form method="post">
-                   
+                        <div class="field">
+                            <label for="imageExtension" class="label">Formato de Imagem</label>
+                            <div class="select is-fullwidth">
+                                <select name="imageExtension" id="imageExtension" onchange="loadQualityImageField()">
+                                    <option>png</option>
+                                    <option>webp</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="field" id="blockQualityPNG" style="display:none">
+                            <label for="imageQualityPNG" class="label">Qualidade do PNG</label>
+                            <div class="select is-fullwidth">
+                                <select name="imageQualityPNG" id="imageQualityPNG">
+                                    <option>9</option>
+                                    <option>5</option>
+                                    <option>0</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="field" id="blockQualityWEBP" style="display:none">
+                            <label for="imageQualityWEBP" class="label">Qualidade do WebP</label>
+                            <div class="select is-fullwidth">
+                                <select name="imageQualityWEBP" id="imageQualityWEBP">
+                                    <option>100</option>
+                                    <option>50</option>
+                                    <option>0</option>
+                                </select>
+                            </div>
+                        </div>
+
                         <button class="button is-fullwidth is-link" id="btnEnviar" disabled>Enviar</button>
 
                         <h2>Preview</h2>
@@ -128,9 +179,11 @@
                         <input type="hidden" id="imageLargura" name="imageLargura" value=""/>
                         <input type="hidden" id="imageCroppedUpload" name="imageCroppedUpload" value=""/>
                         <input type="hidden" id="imageName" name="imageName" value=""/>
+                        <div class="checkerboard">
                         <figure class="image">
                             <img id="imageCropped" src="" alt="" style="border: 1px solid #555;">
                         </figure>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -142,6 +195,30 @@
 
         let cropper;
         let aspectRatio = 1.777777778; //"16x9";
+
+        window.addEventListener("paste", function(e){
+
+            var item = Array.from(e.clipboardData.items).find(x => /^image\//.test(x.type));
+      
+            var blob = item.getAsFile();
+
+            const imgtag = document.getElementById("imageToCrop");
+
+            var img = new Image();
+
+            img.onload = function(){
+                //document.body.appendChild(this);
+                imgtag.src = img.src;
+            };
+
+            img.src = URL.createObjectURL(blob);
+
+            if (cropper) {
+                cropper.destroy();
+            }
+
+            setTimeout(loadCropper, 500);
+        });
 
         function onFileUploaded(event) {
 
@@ -273,8 +350,24 @@
             document.getElementById('btnEnviar').removeAttribute("disabled");
         }
 
-    </script>
+        function loadQualityImageField() {
 
+            const fileExtension = document.getElementById('imageExtension');
+
+            const blockWebp = document.getElementById('blockQualityWEBP');
+            const blockPng = document.getElementById('blockQualityPNG');
+
+            if(fileExtension.value === "png") {
+                document.getElementById('blockQualityWEBP').style.display = "none";
+                document.getElementById('blockQualityPNG').style.display = "block"
+            }else{
+                document.getElementById('blockQualityWEBP').style.display = "block";
+                document.getElementById('blockQualityPNG').style.display = "none"
+            }
+            console.log(fileExtension.value);
+        }
+
+    </script>
 </body>
 
 </html>

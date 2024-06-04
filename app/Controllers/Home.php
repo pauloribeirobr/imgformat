@@ -2,6 +2,8 @@
 
 namespace App\Controllers;
 
+use App\Libraries\Util;
+
 class Home extends BaseController
 {
     public function index(): string
@@ -18,6 +20,7 @@ class Home extends BaseController
     {
         helper('filesystem');
 
+
         $session = session();
 
         $request = service('request');
@@ -27,6 +30,8 @@ class Home extends BaseController
 
         $imagemOriginalLargura = $postData["imageLargura"];
         $imagemOriginalAltura = $postData["imageAltura"];
+
+        //var_dump($request);
 
         /*
             Regrinha de três básica
@@ -41,14 +46,16 @@ class Home extends BaseController
         $imagemLargura = 770;
         $imagemAltura = $imagemOriginalAltura * ($imagemLargura / $imagemOriginalLargura);
         
-        //var_dump($imagemLargura, $imagemAltura);
-        //dd($imagemAltura);
-        
         $newImage = imagecreatetruecolor($imagemLargura, $imagemAltura);
-
+        //preservar a transparência
+        imagealphablending($newImage, false);
+        imagesavealpha($newImage, true);
+        $transparent = imagecolorallocatealpha($newImage, 255, 255, 255, 127);
+        imagefilledrectangle($newImage, 0, 0, $imagemLargura, $imagemAltura, $transparent);
         
         // Resize the image 
-        imagecopyresized($newImage, $image, 0, 0, 0, 0, $imagemLargura, $imagemAltura, $imagemOriginalLargura, $imagemOriginalAltura); 
+        //imagecopyresized($newImage, $image, 0, 0, 0, 0, $imagemLargura, $imagemAltura, $imagemOriginalLargura, $imagemOriginalAltura); 
+        imagecopyresampled($newImage, $image, 0, 0, 0, 0, $imagemLargura, $imagemAltura, $imagemOriginalLargura, $imagemOriginalAltura); 
         
         $imageDirectory = FCPATH . "temp/" . $session->session_id . "/";
         $imageDirectoryDisplay = "temp/" . $session->session_id . "/";
@@ -57,12 +64,21 @@ class Home extends BaseController
             mkdir($imageDirectory);
         }
 
-        $imageName = $this->getBaseName($postData["imageName"]) . ".webp";
-        
-        imagewebp($newImage, $imageDirectory . $imageName);
+        $imageName = $this->getBaseName($postData["imageName"]) . "." . $postData["imageExtension"];
+
+        if($postData["imageExtension"] == "png") {
+            imagepng($newImage, $imageDirectory . $imageName, $postData["imageQualityPNG"]);
+        }
+
+        if($postData["imageExtension"] == "webp") {
+            imagewebp($newImage, $imageDirectory . $imageName, $postData["imageQualityWEBP"]);
+        }
 
         $data = [
-            'image'   => $imageDirectoryDisplay . $imageName,
+            'image'                 => $imageDirectoryDisplay . $imageName,
+            'imageName'             => $imageName,
+            'imageSize'             => Util::humanFilesize(filesize($imageDirectoryDisplay . $imageName), 2),
+            'imageDimensions'       => round($imagemAltura,2) . "px x " . round($imagemLargura,2) . "px"
         ];
         
         return view('optimize_to_web_post', $data);
